@@ -18,41 +18,41 @@ void setPinModes() {
 void controlPump1(bool state) {
   if(state) {
     digitalWrite(pump1Pin, HIGH);
-    return;
+  } else {
+    digitalWrite(pump1Pin, LOW);
   }
-  digitalWrite(pump1Pin, LOW);
 }
 
 void controlPump2(bool state) {
   if(state) {
     digitalWrite(pump2Pin, HIGH);
-    return;
+  } else {
+    digitalWrite(pump2Pin, LOW);
   }
-  digitalWrite(pump2Pin, LOW);
 }
 
 void controlFAN(bool state) {
   if(state) {
     digitalWrite(fanPin, HIGH);
-    return;
+  } else {
+    digitalWrite(fanPin, LOW);
   }
-  digitalWrite(fanPin, LOW);
 }
 
 void controlLEDStrip(bool state) {
   if(state) {
     digitalWrite(LEDStripPin, HIGH);
-    return;
+  } else {
+    digitalWrite(LEDStripPin, LOW);
   }
-  digitalWrite(LEDStripPin, LOW);
 }
 
 void controlWaterLED(bool state) {
   if(state) {
     digitalWrite(waterLEDPin, HIGH);
-    return;
+  } else {
+    digitalWrite(waterLEDPin, LOW);
   }
-  digitalWrite(waterLEDPin, LOW);
 }
 
 bool isWaterInTank() {

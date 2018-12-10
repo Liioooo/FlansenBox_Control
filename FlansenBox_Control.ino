@@ -1,3 +1,7 @@
+#define FAN_INTERVAL 1000 * 60 * 60 * 3
+#define LOOP_INTERVAL 1000 * 60 * 10
+#define PUMP_DURATION 1000 * 5
+
 unsigned long lastTimeFans = 0;
 
 void setup() {
@@ -7,12 +11,12 @@ void setup() {
 void loop() {
   controlFAN(false);
   //run the fans for the sleep time defined on line 15
-  if(millis() - lastTimeFans > 1000 * 60 * 60 * 3) { //run the fans every 3 hours for 10 min
+  if(millis() - lastTimeFans > FAN_INTERVAL) { //run the fans every 3 hours for 10 min
     controlFAN(true);
     lastTimeFans = millis();
   }
   checkMoistureAndWater();
-  delay(1000 * 60 * 10); //wait 10 min
+  delay(LOOP_INTERVAL); //wait 10 min
 }
 
 
@@ -29,12 +33,12 @@ void checkMoistureAndWater() { //TODO: test moisture values
     }
     
     if(watering1) {
-      watering1 = millis() - wateringStarted < 1000 * 5; 
+      watering1 = millis() - wateringStarted < PUMP_DURATION;
     }
     controlPump1(watering1);
 
     if(watering2) {
-      watering2 = millis() - wateringStarted < 1000 * 5; 
+      watering2 = millis() - wateringStarted < PUMP_DURATION;
     }
     controlPump2(watering2);
     delay(1);
