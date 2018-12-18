@@ -7,13 +7,13 @@
 
 #define soilSensorUpperPin A0
 #define soilSensorLowerPin A1
-#define soilSensorUpperCurrent 5 // current for sensor 1
-#define soilSensorLowerCurrent 6 // current for sensor 2
+#define soilSensorUpperCurrent 5
+#define soilSensorLowerCurrent 6
 
 #define waterInTankPin A2 // input pin for water measering
 #define waterInTankCurrent 4 // current for water tank measering
 
-#define WATER_IN_TANK_MIN_VALUE 800 //TODO: test the value
+#define WATER_IN_TANK_MIN_VALUE 800
 
 void setPinModes() {
   // set timers for PWM frequency otside the hearing spektrum 
@@ -33,10 +33,7 @@ void setPinModes() {
 
 void controlPumpUpper(bool state) {
   if(state) {
-    // drossels the speed dow
-    analogWrite(pumpUpperPin, 255);
-    delay(800); // start the motor
-    analogWrite(pumpUpperPin, 150);
+    analogWrite(pumpUpperPin, 50);
   } else {
     analogWrite(pumpUpperPin, 0);
   }
@@ -44,16 +41,13 @@ void controlPumpUpper(bool state) {
 
 void controlPumpLower(bool state) {
   if(state) {
-    // drossels the speed dow
-    analogWrite(pumpLowerPin, 255);
-    delay(800); // start the motor
-    analogWrite(pumpLowerPin, 150);
+    analogWrite(pumpLowerPin, 50);
   } else {
     analogWrite(pumpLowerPin, 0);
   }
 }
 
-void controlFAN(bool state) {
+void controlFan(bool state) {
   if(state) {
     // drossels the speed dow
     analogWrite(fanPin, 255);
@@ -85,7 +79,7 @@ bool isWaterInTank() {
   delay(200);
   int value = analogRead(waterInTankPin);
   digitalWrite(waterInTankCurrent, LOW);
-  return value > WATER_IN_TANK_MIN_VALUE; //TODO: test the value
+  return value < WATER_IN_TANK_MIN_VALUE;
 }
 
 int getMoistureUpper() {

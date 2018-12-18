@@ -1,8 +1,8 @@
-#define FAN_INTERVAL 1000 * 60 * 60 * 3
-#define LOOP_INTERVAL 1000 * 60 * 10
+const unsigned long FAN_INTERVAL = 1000l*60*60*3;
+const unsigned long LOOP_INTERVAL = 1000l*60*10;
 
-#define PUMP_DURATION_UPPER 1000 * 5
-#define PUMP_DURATION_LOWER 1000 * 5
+const unsigned long PUMP_DURATION_UPPER = 1000*5;
+const unsigned long PUMP_DURATION_LOWER = 1000*5;
 
 //TODO: test moisture values
 #define MIN_MOISTURE_UPPER 500
@@ -15,10 +15,10 @@ void setup() {
 }
 
 void loop() {
-  controlFAN(false);
+  controlFan(false);
   //run the fans for the sleep time defined on line 19
   if(millis() - lastTimeFans > FAN_INTERVAL) { //run the fans every 3 hours for 10 min
-    controlFAN(true);
+    controlFan(true);
     lastTimeFans = millis();
   }
   checkMoistureAndWater();
