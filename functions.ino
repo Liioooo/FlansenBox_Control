@@ -1,53 +1,55 @@
-#define pump1Pin 9
-#define pump2Pin 10
+#define pumpUpperPin 9
+#define pumpLowerPin 10
 #define fanPin 11
 #define LEDStripPin 8
 
 #define waterLEDPin 7 //red LED, water indicator
 
-#define soilSensor1Pin A0
-#define soilSensor2Pin A1
-#define soilSensor1Current 5 // current for sensor 1
-#define soilSensor2Current 6 // current for sensor 2
+#define soilSensorUpperPin A0
+#define soilSensorLowerPin A1
+#define soilSensorUpperCurrent 5 // current for sensor 1
+#define soilSensorLowerCurrent 6 // current for sensor 2
 
-#define waterInTankPin A2 //input pin for water measering
+#define waterInTankPin A2 // input pin for water measering
 #define waterInTankCurrent 4 // current for water tank measering
+
+#define WATER_IN_TANK_MIN_VALUE 800 //TODO: test the value
 
 void setPinModes() {
   // set timers for PWM frequency otside the hearing spektrum 
   TCCR1B = TCCR1B & 0b11111000 | 0x01; // pin 9,10
   TCCR2B = TCCR2B & 0b11111000 | 0x01; // pin 11,3
   
-  pinMode(pump1Pin, OUTPUT);
-  pinMode(pump2Pin, OUTPUT);
+  pinMode(pumpUpperPin, OUTPUT);
+  pinMode(pumpLowerPin, OUTPUT);
   pinMode(fanPin, OUTPUT);
   pinMode(LEDStripPin, OUTPUT);
   pinMode(waterLEDPin, OUTPUT);
-  pinMode(soilSensor1Current, OUTPUT);
-  pinMode(soilSensor2Current, OUTPUT);
+  pinMode(soilSensorUpperCurrent, OUTPUT);
+  pinMode(soilSensorLowerCurrent, OUTPUT);
   pinMode(waterInTankCurrent, OUTPUT);
 
 }
 
-void controlPump1(bool state) {
+void controlPumpUpper(bool state) {
   if(state) {
     // drossels the speed dow
-    analogWrite(pump1Pin, 255);
+    analogWrite(pumpUpperPin, 255);
     delay(800); // start the motor
-    analogWrite(pump1Pin, 150);
+    analogWrite(pumpUpperPin, 150);
   } else {
-    analogWrite(pump1Pin, 0);
+    analogWrite(pumpUpperPin, 0);
   }
 }
 
-void controlPump2(bool state) {
+void controlPumpLower(bool state) {
   if(state) {
     // drossels the speed dow
-    analogWrite(pump2Pin, 255);
+    analogWrite(pumpLowerPin, 255);
     delay(800); // start the motor
-    analogWrite(pump2Pin, 150);
+    analogWrite(pumpLowerPin, 150);
   } else {
-    analogWrite(pump2Pin, 0);
+    analogWrite(pumpLowerPin, 0);
   }
 }
 
@@ -83,21 +85,21 @@ bool isWaterInTank() {
   delay(200);
   int value = analogRead(waterInTankPin);
   digitalWrite(waterInTankCurrent, LOW);
-  return value > 800; //TODO: test the value
+  return value > WATER_IN_TANK_MIN_VALUE; //TODO: test the value
 }
 
-int getMoisture1() {
-  digitalWrite(soilSensor1Current, HIGH);
+int getMoistureUpper() {
+  digitalWrite(soilSensorUpperCurrent, HIGH);
   delay(400);
-  int val =  analogRead(soilSensor1Pin);
-  digitalWrite(soilSensor2Current, LOW);
+  int val =  analogRead(soilSensorUpperPin);
+  digitalWrite(soilSensorLowerCurrent, LOW);
   return val;
 }
 
-int getMoisture2() {
-  digitalWrite(soilSensor2Current, HIGH);
+int getMoistureLower() {
+  digitalWrite(soilSensorLowerCurrent, HIGH);
   delay(400);
-  int val = analogRead(soilSensor2Pin);
-  digitalWrite(soilSensor2Current, LOW);
+  int val = analogRead(soilSensorLowerPin);
+  digitalWrite(soilSensorLowerCurrent, LOW);
   return val;
 }

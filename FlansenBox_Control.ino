@@ -1,7 +1,12 @@
 #define FAN_INTERVAL 1000 * 60 * 60 * 3
 #define LOOP_INTERVAL 1000 * 60 * 10
-#define PUMP1_DURATION 1000 * 5
-#define PUMP2_DURATION 1000 * 5
+
+#define PUMP_DURATION_UPPER 1000 * 5
+#define PUMP_DURATION_LOWER 1000 * 5
+
+//TODO: test moisture values
+#define MIN_MOISTURE_UPPER 500
+#define MIN_MOISTURE_LOWER 500
 
 unsigned long lastTimeFans = 0;
 
@@ -21,39 +26,39 @@ void loop() {
 }
 
 
-void checkMoistureAndWater() { 
+void checkMoistureAndWater() {
   //TODO: test moisture values
-  bool watering1 = getMoisture1() < 500;
-  bool watering2 = getMoisture2() < 500;
+  bool wateringUpper = getMoistureUpper() < MIN_MOISTURE_UPPER;
+  bool wateringLower = getMoistureLower() < MIN_MOISTURE_LOWER;
   
   unsigned long wateringStarted = millis();
 
   if(!checkWaterInTank()) {
-      watering1 = false;
-      watering2 = false;
+      wateringUpper = false;
+      wateringLower = false;
   }
 
-  controlPump1(watering1);
-  controlPump2(watering2);
+  controlPumpUpper(wateringUpper);
+  controlPumpLower(wateringLower);
 
-  while(watering1 || watering2) {
+  while(wateringUpper || wateringLower) {
     if(!checkWaterInTank()) {
-      watering1 = false;
-      watering2 = false;
+      wateringUpper = false;
+      wateringLower = false;
     }
 
-    if(millis() - wateringStarted > PUMP1_DURATION) {
-      watering1 = false;
+    if(millis() - wateringStarted > PUMP_DURATION_UPPER) {
+      wateringUpper = false;
     }
-    if(millis() - wateringStarted > PUMP2_DURATION) {
-      watering2 = false;
+    if(millis() - wateringStarted > PUMP_DURATION_LOWER) {
+      wateringLower = false;
     }
     
-    if(!watering1) {
-      controlPump1(false);
+    if(!wateringUpper) {
+      controlPumpUpper(false);
     }
-    if(!watering2) {
-      controlPump2(false);
+    if(!wateringLower) {
+      controlPumpLower(false);
     }
     
   }
