@@ -2,46 +2,80 @@
 //TEST VALUE
 //=============
 
-const unsigned long FAN_INTERVAL = 1000l*12; //12 sek
-const unsigned long LED_STRIP_INTERVAL = 1000l*20; //20 sek
-const unsigned long LOOP_INTERVAL = 1000l*10; //10 sek
+const unsigned long FAN_OFF_TIME = 1000l*60*60; //1 stunde
+const unsigned long FAN_ON_TIME = 1000l*60*6; //3 minuten
+const unsigned long LED_STRIP_OFF_TIME = 1000l*60*60*5; //5 stunden
+const unsigned long LED_STRIP_ON_TIME = 1000l*60*60; //1 stunde
 
-const unsigned long PUMP_DURATION_UPPER = 1000*2;
-const unsigned long PUMP_DURATION_LOWER = 1000*2;
+const unsigned long LOOP_INTERVAL = 1000l*60*1; //1 minuten
+
+const unsigned long PUMP_ON_TIME_UPPER = 1000l*3;
+const unsigned long PUMP_OFF_TIME_UPPER = 1000l*60*60*24*5; //5 tage
+const unsigned long PUMP_ON_TIME_LOWER = 1000l*1;
+const unsigned long PUMP_OFF_TIME_LOWER = 1000l*60*60*24*2; //2 tage
 
 //TODO: test moisture values
-#define MIN_MOISTURE_UPPER 500
-#define MIN_MOISTURE_LOWER 500
+#define MIN_MOISTURE_UPPER 200
+#define MIN_MOISTURE_LOWER 200
 
 unsigned long lastTimeFans = 0;
+bool fansOn = false;
 unsigned long lastTimeLeds = 0;
+bool ledsOn = false;
+unsigned long lastTimePumpUpper = 0;
+unsigned long lastTimePumpLower = 0;
 
 void setup() {
   setPinModes();
 }
 
-bool isRunning = 1==0;
+bool isRunning = 1==1;
 bool dauerPump = 1==0;
+bool dauerLeucht = 1==0;
 
 void loop() {
   if (isRunning) {
-    controlFan(false);
-    controlLEDStrip(false);
     //run the fans for the sleep time defined on line 19
-    if(millis() - lastTimeFans > FAN_INTERVAL) { //run the fans every 3 hours for 10 min
-      controlFan(true);
-      lastTimeFans = millis();
+    if (fansOn) {
+      if(millis() - lastTimeFans > FAN_ON_TIME) {
+        controlFan(false);
+        lastTimeFans = millis();
+        fansOn = false;
+      }
+    } else {
+      if(millis() - lastTimeFans > FAN_OFF_TIME) {
+        controlFan(true);
+        lastTimeFans = millis();
+        fansOn = true;
+      }
     }
-    if(millis() - lastTimeLeds > LED_STRIP_INTERVAL) {
-      controlLEDStrip(true);
-      lastTimeLeds = millis();
+
+    
+    if (ledsOn) {
+      if(millis() - lastTimeLeds > LED_STRIP_ON_TIME) {
+        controlLEDStrip(false);
+        lastTimeLeds = millis();
+        ledsOn = false;
+      }
+    } else {
+      if(millis() - lastTimeLeds > LED_STRIP_OFF_TIME) {
+        controlLEDStrip(true);
+        lastTimeLeds = millis();
+        ledsOn = true;
+      }
     }
+
+    
     checkMoistureAndWater();
-    delay(LOOP_INTERVAL); //wait 10 min
+    delay(LOOP_INTERVAL); 
   } else if (dauerPump) {
     controlPumpUpper(true);
     controlPumpLower(true);
+  } else if (dauerLeucht) {
+    controlLEDStrip(true);
+    controlFan(true);
   }
+
 }
 
 
@@ -53,33 +87,26 @@ void checkMoistureAndWater() {
   unsigned long wateringStarted = millis();
 
   if(!checkWaterInTank()) {
-      wateringUpper = false;
-      wateringLower = false;
+    wateringUpper = false;
+    wateringLower = false;
+  }
+  
+  if(millis() - lastTimePumpUpper > PUMP_OFF_TIME_UPPER) {
+    controlPumpUpper(wateringUpper);
+    while (millis() < wateringStarted + PUMP_ON_TIME_UPPER) {
+      delay(100);
+    }
+    controlPumpUpper(false);
+    lastTimePumpUpper = millis();
   }
 
-  controlPumpUpper(wateringUpper);
-  controlPumpLower(wateringLower);
-
-  while(wateringUpper || wateringLower) {
-    if(!checkWaterInTank()) {
-      wateringUpper = false;
-      wateringLower = false;
+  if(millis() - lastTimePumpLower > PUMP_OFF_TIME_LOWER) {
+    controlPumpLower(wateringLower);
+    while (millis() < wateringStarted + PUMP_ON_TIME_LOWER) {
+      delay(100);
     }
-
-    if(millis() - wateringStarted > PUMP_DURATION_UPPER) {
-      wateringUpper = false;
-    }
-    if(millis() - wateringStarted > PUMP_DURATION_LOWER) {
-      wateringLower = false;
-    }
-    
-    if(!wateringUpper) {
-      controlPumpUpper(false);
-    }
-    if(!wateringLower) {
-      controlPumpLower(false);
-    }
-    
+    controlPumpLower(false);
+    lastTimePumpLower = millis();
   }
 }
 
