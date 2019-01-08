@@ -3,7 +3,7 @@
 //=============
 
 const unsigned long FAN_OFF_TIME = 1000l*60*60; //1 stunde
-const unsigned long FAN_ON_TIME = 1000l*60*6; //3 minuten
+const unsigned long FAN_ON_TIME = 1000l*60*3; //3 minuten
 const unsigned long LED_STRIP_OFF_TIME = 1000l*60*60*5; //5 stunden
 const unsigned long LED_STRIP_ON_TIME = 1000l*60*60; //1 stunde
 
