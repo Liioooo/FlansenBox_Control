@@ -1,6 +1,6 @@
-=============
-TEST VALUE
-=============
+//=============
+//TEST VALUE
+//=============
 
 const unsigned long FAN_INTERVAL = 1000l*12; //12 sek
 const unsigned long LED_STRIP_INTERVAL = 1000l*20; //20 sek
