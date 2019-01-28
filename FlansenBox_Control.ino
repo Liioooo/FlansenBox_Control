@@ -6,7 +6,7 @@ const unsigned long LED_STRIP_ON_TIME = 1000l*60*30; //30 Minuten
 const unsigned long LOOP_INTERVAL = 1000l*60; //1 minuten
 
 const unsigned long PUMP_ON_TIME_UPPER = 1000l*6;
-const unsigned long PUMP_OFF_TIME_UPPER = 1000l*60*60*24*3; //3 tage
+const unsigned long PUMP_OFF_TIME_UPPER = 1000l*60*60*24*2; //2 tage
 const unsigned long PUMP_ON_TIME_LOWER = 1000l*4;
 const unsigned long PUMP_OFF_TIME_LOWER = 1000l*60*60*24*1; //1 tage
 
